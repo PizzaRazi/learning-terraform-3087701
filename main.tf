@@ -65,12 +65,12 @@ module "blog_alb" {
   # }
 
   target_groups = {
-    # ex-instance = {
-    name_prefix = "${var.environment.network_prefix}-"
-    protocol    = "HTTP"
-    port        = 80
-    target_type = "instance"
-    # }
+    ex-instance = {
+      name_prefix = "${var.environment.network_prefix}-"
+      protocol    = "HTTP"
+      port        = 80
+      target_type = "instance"
+    }
   }
 
   tags = {
