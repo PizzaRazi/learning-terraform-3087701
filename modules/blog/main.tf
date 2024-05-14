@@ -42,7 +42,7 @@ module "autoscaling" {
   max_size = var.asg_max_size
 
   vpc_zone_identifier = module.blog_vpc.public_subnets
-  target_group_arns   = module.blog_alb.target_groups
+  target_group_arns   = module.blog_alb.target_group_arns
   security_groups     = [module.blog_sg.security_group_id]
 
   image_id      = data.aws_ami.app_ami.id
@@ -50,7 +50,8 @@ module "autoscaling" {
 }
 
 module "blog_alb" {
-  source = "terraform-aws-modules/alb/aws"
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 6.0"
 
   name = "${var.environment.name}-blog-alb"
 
@@ -64,14 +65,22 @@ module "blog_alb" {
   #   bucket = "my-alb-logs"
   # }
 
-  target_groups = {
-    ex-instance = {
-      name_prefix = "tgp"
-      protocol    = "HTTP"
-      port        = 80
-      target_type = "instance"
+  # target_groups = {
+  #   ex-instance = {
+  #     name_prefix = "tgp"
+  #     protocol    = "HTTP"
+  #     port        = 80
+  #     target_type = "instance"
+  #   }
+  # }
+  target_groups = [
+    {
+      name_prefix      = "${var.environment.name}-"
+      backend_protocol = "HTTP"
+      backend_port     = 80
+      target_type      = "instance"
     }
-  }
+  ]
 
   tags = {
     Environment = var.environment.name
